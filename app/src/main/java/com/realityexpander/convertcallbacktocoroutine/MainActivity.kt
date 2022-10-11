@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // CALLBACK STYLE
+        // ** CALLBACK STYLE
         getDataFromFirestoreUsingCallback(
             { exist ->
                 if (exist) {
@@ -37,13 +37,13 @@ class MainActivity : AppCompatActivity() {
             }
         )
 
-//        // COROUTINES STYLE
+        // COROUTINES STYLE
         val job = Job()
         val scope = CoroutineScope(Dispatchers.IO + job)
         scope.launch {
             try {
                 val result = getDataFromFirestoreUsingSuspend()
-//                val result = getDataFromFirestoreUsingSuspendCancellable()
+                // val result = getDataFromFirestoreUsingSuspendCancellable()
                 withContext(Dispatchers.Main) {
                     if (result) {
                         binding.textView2.text = "Data Exists"
@@ -61,12 +61,10 @@ class MainActivity : AppCompatActivity() {
             //job.cancel()
         }
 
-        // COROUTINES STYLE WITH DATA
+        // ** COROUTINES STYLE WITH DATA
         val job2 = Job()
         val scope2 = CoroutineScope(Dispatchers.IO + job)
         scope.launch {
-
-
             try {
                 val result = getDataFromFirestoreUsingSuspendWithData()
                 withContext(Dispatchers.Main) {
