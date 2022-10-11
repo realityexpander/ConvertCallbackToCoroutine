@@ -74,7 +74,6 @@ class MainActivity : AppCompatActivity() {
                                 data.toString() +"\n"+
                                 data["name"]
                         }
-                        // binding.textView3.text = result.payload?.get("name") ?: "Data Not Exist" // Direct access to dataMap
                     } else {
                         binding.textView3.text = "Data Not Exist"
                     }
