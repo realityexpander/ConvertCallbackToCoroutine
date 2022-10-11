@@ -13,7 +13,7 @@ open class Resource<T> private constructor(
     val isError: Boolean
         get() = error != null
 
-    class Success<T>(data: T) : Resource<T>(payload = data)
+    class Success<T>(data: T?) : Resource<T>(payload = data)
     class Failure<T>(override val error: Exception) : Resource<T>(error = error)
 
     override fun toString(): String {
@@ -28,7 +28,10 @@ open class Resource<T> private constructor(
 
 fun main() {
     val data: MutableMap<String, Any> = mutableMapOf("name" to "John", "age" to 30)
-    val resourceSuccess = Resource.Success<MutableMap<String, Any>>(data)
+    var resourceSuccess = Resource.Success<MutableMap<String, Any>>(data)
+    println(resourceSuccess)
+
+    resourceSuccess = Resource.Success<MutableMap<String, Any>>(null)
     println(resourceSuccess)
 
     val resourceFailure = Resource.Failure<MutableMap<String, Any>>(Exception("Error"))
