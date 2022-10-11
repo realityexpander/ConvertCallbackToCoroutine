@@ -1,5 +1,7 @@
 package com.realityexpander.convertcallbacktocoroutine
 
+typealias docSnapShotMapType = MutableMap<String?, Any?>
+
 // Union Class for Booleans, Exceptions, and DataMap (note: specific for docSnapShotMapType)
 open class Either private constructor(
     open val boolean: kotlin.Boolean? = null,
@@ -40,8 +42,9 @@ open class Either private constructor(
         return this.dataMap
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun getItem(key: String): String? {
-        return this.dataMap?.get(key)
+        return (this.dataMap as MutableMap<String?, String?>)[key]
     }
 
     fun toError(): Exception {

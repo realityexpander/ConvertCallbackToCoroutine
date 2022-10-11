@@ -2,14 +2,13 @@ package com.realityexpander.convertcallbacktocoroutine
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.realityexpander.convertcallbacktocoroutine.databinding.ActivityMainBinding
 import kotlinx.coroutines.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
-
-typealias docSnapShotMapType = MutableMap<String?, String?>
 
 class MainActivity : AppCompatActivity() {
 
@@ -69,11 +68,11 @@ class MainActivity : AppCompatActivity() {
                 val result = getDataFromFirestoreUsingSuspendWithData()
                 withContext(Dispatchers.Main) {
                     if (result.hasPayload) {
-                        result.payload?.let { data ->
+                        result.payload?.data?.let { data ->
                             binding.textView3.text =
-                                result.toString() +
-                                "\n"+ data.toString() +
-                                "\n"+ data["name"]
+                                //result.toString() +"\n"+
+                                data.toString() +"\n"+
+                                data["name"]
                         }
                         // binding.textView3.text = result.payload?.get("name") ?: "Data Not Exist" // Direct access to dataMap
                     } else {
@@ -130,14 +129,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun getDataFromFirestoreUsingSuspendWithData(): Resource<docSnapShotMapType?> { // NOTE: the return value is defined here.
-        return suspendCoroutine { continuation ->
+    private suspend fun getDataFromFirestoreUsingSuspendWithData(): Resource<DocumentSnapshot?> { // NOTE: the return value is defined here.
+        return suspendCoroutine<Resource<DocumentSnapshot?>> { continuation ->
             firebaseFirestore.collection("users")
                 .document("user1")
                 .get()
                 .addOnSuccessListener { documentSnapshot ->
                     if (documentSnapshot.exists()) {
-                        continuation.resume(Resource.Success(documentSnapshot.data as? docSnapShotMapType?)) // alternative to send back just a value
+                        continuation.resume(Resource.Success(documentSnapshot)) // alternative to send back just a value
                     } else {
                         continuation.resume(Resource.Success(null))
                     }
