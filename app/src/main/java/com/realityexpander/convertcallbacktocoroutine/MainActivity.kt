@@ -66,41 +66,13 @@ class MainActivity : AppCompatActivity() {
 
 
             try {
-//                val data = getDataFromFirestoreUsingSuspendWithData()
-//                val result: MutableMap<String, Either>  =
-//                val result: MutableMap<String, Either>  =
-                    //mutableMapOf("exists" to Either(data.first), "data" to Either.dataMap(data.second))
-                    //mutableMapOf("exists" to Either.boolean(data.first), "data" to Either.dataMap(data.second))
-//                    mutableMapOf("exists" to Either(data.first), "data" to Either(data.second))
-//                withContext(Dispatchers.Main) {
-//                    if (result["exists"]?.toBoolean() == true) {
-////                        binding.textView3.text = (result["data"]).toString()
-////                        binding.textView3.text = result["data"]?.dataMap?.get("name") ?: "Data Not Exist" // Direct access to dataMap
-//                        binding.textView3.text = result["data"]?.getItem("name") ?: "Data Not Exist" // Best way to get data
-//                        //binding.textView3.text = (result["data"] as Map<String?, String?>?).toString()
-//                    } else {
-//                        binding.textView3.text = "Data Not Exist"
-//                    }
-//                }
-
-//                val data = getDataFromFirestoreUsingSuspendWithData()
-//                withContext(Dispatchers.Main) {
-//                    if (data.toBoolean()) {
-////                        binding.textView3.text = (result["data"]).toString()
-////                        binding.textView3.text = result["data"]?.dataMap?.get("name") ?: "Data Not Exist" // Direct access to dataMap
-//                        binding.textView3.text = data.getItem("name") ?: "Data Not Exist" // Best way to get data
-//                        //binding.textView3.text = (result["data"] as Map<String?, String?>?).toString()
-//                    } else {
-//                        binding.textView3.text = "Data Not Exist"
-//                    }
-//                }
-
                 val result = getDataFromFirestoreUsingSuspendWithData()
                 withContext(Dispatchers.Main) {
                     if (result.hasPayload) {
-//                        binding.textView3.text = (result["data"]).toString()
-                        binding.textView3.text = result?.payload?.get("name") ?: "Data Not Exist" // Direct access to dataMap
-                        //binding.textView3.text = (result["data"] as Map<String?, String?>?).toString()
+                        result.payload?.let { data ->
+                            binding.textView3.text = data.toString() + "\n"+ data["name"]
+                        }
+                        // binding.textView3.text = result.payload?.get("name") ?: "Data Not Exist" // Direct access to dataMap
                     } else {
                         binding.textView3.text = "Data Not Exist"
                     }
@@ -155,29 +127,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //private suspend fun getDataFromFirestoreUsingSuspendWithData(): Pair<Boolean, DataMapType?>{ // NOTE: the return value is defined here.
-    //private suspend fun getDataFromFirestoreUsingSuspendWithData(): Either { // NOTE: the return value is defined here.
-    private suspend fun getDataFromFirestoreUsingSuspendWithData(): Resource<DataMapType?> { // NOTE: the return value is defined here.
-        // Note: the generic type is the successful result type of the Task
+    private suspend fun getDataFromFirestoreUsingSuspendWithData(): Resource<docSnapShotMapType?> { // NOTE: the return value is defined here.
         return suspendCoroutine { continuation ->
             firebaseFirestore.collection("users")
                 .document("user1")
                 .get()
                 .addOnSuccessListener { documentSnapshot ->
-//                    if (documentSnapshot.exists()) {
-//                        continuation.resume(Pair(true, documentSnapshot.data as? DataMapType?)) // alternative to send back just a value
-//                    } else {
-//                        continuation.resume(Pair(false, null))
-//                    }
-//                    if (documentSnapshot.exists()) {
-//                        continuation.resume(Either(true, documentSnapshot.data as? DataMapType?)) // alternative to send back just a value
-//                    } else {
-//                        continuation.resume(Either(false, null))
-//                    }
                     if (documentSnapshot.exists()) {
-                        continuation.resume(Resource.Success(true, documentSnapshot.data as? DataMapType?)) // alternative to send back just a value
+                        continuation.resume(Resource.Success(documentSnapshot.data as? docSnapShotMapType?)) // alternative to send back just a value
                     } else {
-                        continuation.resume(Resource.Success(false, null))
+                        continuation.resume(Resource.Success(null))
                     }
                 }
                 .addOnFailureListener { exception ->

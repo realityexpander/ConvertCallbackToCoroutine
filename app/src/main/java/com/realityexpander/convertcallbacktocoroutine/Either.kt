@@ -2,17 +2,40 @@ package com.realityexpander.convertcallbacktocoroutine
 
 // Union Class for Booleans, Exceptions, and DataMap
 
-typealias DataMapType = MutableMap<String?, String?>
+typealias docSnapShotMapType = MutableMap<String?, String?>
+
+// Resource Class for Booleans, Exceptions, and DataMap
+open class Resource<T> private constructor(
+    open val payload: T? = null,
+    open val error: Exception? = null
+) {
+    val hasPayload: Boolean
+        get() = payload != null
+    val isError: Boolean
+        get() = error != null
+
+    class Success<T>(data: T) : Resource<T>(payload = data)
+    class Failure<T>(override val error: Exception) : Resource<T>(error = error)
+
+    override fun toString(): String {
+        return "Resource(hasPayload=$hasPayload, data=$payload, error=$error)"
+    }
+
+    fun toError(): Exception {
+        return this.error ?: Exception("No Error")
+    }
+}
+
 
 open class Either private constructor(
     open val boolean: kotlin.Boolean? = null,
-    open val dataMap: DataMapType? = null,
+    open val dataMap: docSnapShotMapType? = null,
     open val error: Exception? = null
 ) {
     constructor(value: kotlin.Boolean) : this(boolean = value)
-    constructor(value: DataMapType?) :  this(dataMap = value)
+    constructor(value: docSnapShotMapType?) :  this(dataMap = value)
     constructor(value: Exception) : this(error = value)
-    constructor(success: kotlin.Boolean, data: DataMapType?) : this(boolean = success, dataMap = data)
+    constructor(success: kotlin.Boolean, data: docSnapShotMapType?) : this(boolean = success, dataMap = data)
 
     val isBoolean: kotlin.Boolean
         get() = boolean != null
@@ -22,12 +45,12 @@ open class Either private constructor(
         get() = error != null
 
     class Boolean(override val boolean: kotlin.Boolean?) : Either(boolean = boolean)
-    class DataMap(override val dataMap: DataMapType?) : Either(dataMap = dataMap)
+    class DataMap(override val dataMap: docSnapShotMapType?) : Either(dataMap = dataMap)
     class Error(override val error: Exception) : Either(error = error)
 
     companion object {
         fun boolean(boolean: kotlin.Boolean) = Either(boolean, null, null)
-        fun dataMap(dataMap: DataMapType?) = Either(null, dataMap, null)
+        fun dataMap(dataMap: docSnapShotMapType?) = Either(null, dataMap, null)
         fun error(error: Exception) = Either(null, null, error)
     }
 
@@ -39,7 +62,7 @@ open class Either private constructor(
         return this.boolean ?: false
     }
 
-    fun toDataMap(): DataMapType? {
+    fun toDataMap(): docSnapShotMapType? {
         return this.dataMap
     }
 
@@ -51,34 +74,6 @@ open class Either private constructor(
         return this.error ?: Exception("No Error")
     }
 }
-
-// Resource Class for Booleans, Exceptions, and DataMap
-open class Resource<T> private constructor(
-    open val isApiCallSuccessful: Boolean? = null,  // api call was successful, but data may be null.
-    open val payload: T? = null,
-    open val error: Exception? = null
-) {
-    val hasPayload: Boolean
-        get() = payload != null
-    val isError: Boolean
-        get() = error != null
-
-    class Success<T>(isApiCallSuccessful: Boolean?, data: T) : Resource<T>(isApiCallSuccessful = isApiCallSuccessful, payload = data)
-    class Failure<T>(override val error: Exception) : Resource<T>(error = error)
-
-    override fun toString(): String {
-        return "Resource(success=$isApiCallSuccessful, data=$payload, error=$error)"
-    }
-
-    fun isApiCallSuccessful(): Boolean {
-        return this.isApiCallSuccessful ?: false
-    }
-
-    fun toError(): Exception {
-        return this.error ?: Exception("No Error")
-    }
-}
-
 
 // Generic version of the above
 private open class Either2<T1,T2>(
