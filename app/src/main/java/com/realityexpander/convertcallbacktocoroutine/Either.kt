@@ -1,32 +1,6 @@
 package com.realityexpander.convertcallbacktocoroutine
 
-// Union Class for Booleans, Exceptions, and DataMap
-
-typealias docSnapShotMapType = MutableMap<String?, String?>
-
-// Resource Class for Booleans, Exceptions, and DataMap
-open class Resource<T> private constructor(
-    open val payload: T? = null,
-    open val error: Exception? = null
-) {
-    val hasPayload: Boolean
-        get() = payload != null
-    val isError: Boolean
-        get() = error != null
-
-    class Success<T>(data: T) : Resource<T>(payload = data)
-    class Failure<T>(override val error: Exception) : Resource<T>(error = error)
-
-    override fun toString(): String {
-        return "Resource(hasPayload=$hasPayload, data=$payload, error=$error)"
-    }
-
-    fun toError(): Exception {
-        return this.error ?: Exception("No Error")
-    }
-}
-
-
+// Union Class for Booleans, Exceptions, and DataMap (note: specific for docSnapShotMapType)
 open class Either private constructor(
     open val boolean: kotlin.Boolean? = null,
     open val dataMap: docSnapShotMapType? = null,
@@ -45,12 +19,12 @@ open class Either private constructor(
         get() = error != null
 
     class Boolean(override val boolean: kotlin.Boolean?) : Either(boolean = boolean)
-    class DataMap(override val dataMap: docSnapShotMapType?) : Either(dataMap = dataMap)
+    class DocSnapShotMapType(override val dataMap: docSnapShotMapType?) : Either(dataMap = dataMap)
     class Error(override val error: Exception) : Either(error = error)
 
     companion object {
         fun boolean(boolean: kotlin.Boolean) = Either(boolean, null, null)
-        fun dataMap(dataMap: docSnapShotMapType?) = Either(null, dataMap, null)
+        fun docSnapShotMapType(dataMap: docSnapShotMapType?) = Either(null, dataMap, null)
         fun error(error: Exception) = Either(null, null, error)
     }
 
@@ -62,7 +36,7 @@ open class Either private constructor(
         return this.boolean ?: false
     }
 
-    fun toDataMap(): docSnapShotMapType? {
+    fun toDocSnapShotMap(): docSnapShotMapType? {
         return this.dataMap
     }
 
@@ -75,6 +49,57 @@ open class Either private constructor(
     }
 }
 
+fun main() {
+    testEither()
+
+    testEither2()
+}
+
+fun testEither() {
+    println("============ Either ===================")
+
+    val dataMap = Either.docSnapShotMapType(mutableMapOf("key" to "value")).toDocSnapShotMap()
+
+    var either = Either(dataMap)
+    println(either)
+    println(either.toBoolean())
+    println(either.toDocSnapShotMap())
+
+    either = Either(true, dataMap)
+    println(either)
+    println(either.toBoolean())
+    println(either.toDocSnapShotMap())
+
+    either = Either.Boolean(true)
+    println(either)
+    println(either.toBoolean())
+    println(either.toDocSnapShotMap())
+
+    either = Either.DocSnapShotMapType(dataMap)
+    println(either)
+    println(either.toBoolean())
+    println(either.toDocSnapShotMap())
+
+    either = Either.boolean(true)
+    println(either)
+    println(either.toBoolean())
+    println(either.toDocSnapShotMap())
+
+    either = Either.docSnapShotMapType(dataMap)
+    println(either)
+    println(either.toBoolean())
+    println(either.toDocSnapShotMap())
+
+    println("key = " + either.getItem("key"))
+
+    either = Either.error(Exception("Error"))
+    println(either)
+    println(either.toBoolean())
+    println(either.toDocSnapShotMap())
+    println(either.toError())
+
+}
+
 // Generic version of the above
 private open class Either2<T1,T2>(
     open val typeSimple: T1? = null,
@@ -84,9 +109,8 @@ private open class Either2<T1,T2>(
     constructor(value: T1?, value2: T2? = null) : this(typeSimple = value, typeComplex = null)
     constructor(value: T2?) : this(typeComplex = value)
     constructor(value: Exception) : this(error = value)
-//    constructor(value: T2?) :  this(typeComplex = value) // cant define this way
+//    constructor(value: T2?) :  this(typeComplex = value) // cant define this way (bc T1 & T2 are unknown at compile time)
 //    constructor(value: T1?) :  this(typeSimple = value)  // cant define this way
-
 
     val isTypeSimple: Boolean
         get() = typeSimple != null
@@ -94,7 +118,6 @@ private open class Either2<T1,T2>(
         get() = typeComplex != null
     val isError: Boolean
         get() = error != null
-
 
     class TypeSimple<T1,T2>(typeSimple: T1?) : Either2<T1,T2>(typeSimple = typeSimple)
     class TypeComplex<T1,T2>(typeComplex: T2?) : Either2<T1,T2>(typeComplex = typeComplex)
@@ -123,7 +146,10 @@ private open class Either2<T1,T2>(
     }
 }
 
-fun main() {
+fun testEither2() {
+    println()
+    println("============ Either2 ===================")
+
     var either = Either2<Boolean, String>("Hello")
     println(either)
     println(either.toT1<Boolean>())

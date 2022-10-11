@@ -9,6 +9,8 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
+typealias docSnapShotMapType = MutableMap<String?, String?>
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -70,7 +72,10 @@ class MainActivity : AppCompatActivity() {
                 withContext(Dispatchers.Main) {
                     if (result.hasPayload) {
                         result.payload?.let { data ->
-                            binding.textView3.text = data.toString() + "\n"+ data["name"]
+                            binding.textView3.text =
+                                result.toString() +
+                                "\n"+ data.toString() +
+                                "\n"+ data["name"]
                         }
                         // binding.textView3.text = result.payload?.get("name") ?: "Data Not Exist" // Direct access to dataMap
                     } else {
