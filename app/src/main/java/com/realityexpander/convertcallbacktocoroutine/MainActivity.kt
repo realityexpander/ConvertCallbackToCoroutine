@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
             }
         )
 
-        // COROUTINES STYLE
+        // ** COROUTINES STYLE (no data returned)
         val job = Job()
         val scope = CoroutineScope(Dispatchers.IO + job)
         scope.launch {
