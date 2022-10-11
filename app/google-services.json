@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "122318255710",
+    "project_id": "convertcallbacktocoroutine",
+    "storage_bucket": "convertcallbacktocoroutine.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:122318255710:android:2d7532a1226dc82b0326cf",
+        "android_client_info": {
+          "package_name": "com.realityexpander.convertcallbacktocoroutine"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "122318255710-vrr5ku8rnq7ohm1j5j38616ngri27psp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeru7EpRY9mGAlNKGmpqCJJKmQ_7Cx6LY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "122318255710-vrr5ku8rnq7ohm1j5j38616ngri27psp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
